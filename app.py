@@ -7,9 +7,10 @@ from huggingface_hub import InferenceClient
 
 # ---------------- Config ----------------
 import os, streamlit as st
-
+DEFAULT_MODEL = os.getenv("MODEL_NAME", "meta-llama/Llama-3.1-8B")  # define BEFORE using it
+PROVIDER = os.getenv("PROVIDER", "featherless-ai")
 def get_hf_token():
-    
+
     # 1) Environment variable wins (works locally & on Streamlit Cloud)
     t = os.getenv("HF_TOKEN")
     if t:
