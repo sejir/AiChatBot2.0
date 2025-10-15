@@ -1,2 +1,2 @@
 streamlit>=1.33
-huggingface_hub>=0.24
+openai>=1.51

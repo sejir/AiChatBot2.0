@@ -3,52 +3,99 @@ import json
 from typing import List, Dict
 
 import streamlit as st
-from huggingface_hub import InferenceClient
+from openai import OpenAI
 
-# ---------------- Config ----------------
-import os, streamlit as st
-DEFAULT_MODEL = os.getenv("MODEL_NAME", "meta-llama/Llama-3.1-8B")  # define BEFORE using it
-PROVIDER = os.getenv("PROVIDER", "featherless-ai")
-def get_hf_token():
+# ---------------- Provider config ----------------
+PROVIDER = os.getenv("PROVIDER", "GROQ").upper()  # GROQ | TOGETHER | OPENROUTER | FIREWORKS | DEEPINFRA
 
-    # 1) Environment variable wins (works locally & on Streamlit Cloud)
-    t = os.getenv("HF_TOKEN")
-    if t:
-        return t
+# Map provider -> base_url + a sensible default model name
+PROVIDERS = {
+    "GROQ": {
+        "base_url": "https://api.groq.com/openai/v1",
+        # see https://console.groq.com for latest models
+        "default_model": os.getenv("MODEL_NAME", "llama-3.1-8b-instant"),
+        "key_env": "GROQ_API_KEY",
+        "secret_key": "GROQ_API_KEY",
+        "extra_headers": {},  # none needed
+    },
+    "TOGETHER": {
+        "base_url": "https://api.together.xyz/v1",
+        # good choices: meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo, mistralai/Mixtral-8x7B-Instruct-v0.1
+        "default_model": os.getenv("MODEL_NAME", "meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo"),
+        "key_env": "TOGETHER_API_KEY",
+        "secret_key": "TOGETHER_API_KEY",
+        "extra_headers": {},
+    },
+    "OPENROUTER": {
+        "base_url": "https://openrouter.ai/api/v1",
+        # many free/cheap models; e.g. meta-llama/llama-3.1-8b-instruct:free (availability varies)
+        "default_model": os.getenv("MODEL_NAME", "meta-llama/llama-3.1-8b-instruct"),
+        "key_env": "OPENROUTER_API_KEY",
+        "secret_key": "OPENROUTER_API_KEY",
+        "extra_headers": {
+            # Optional but recommended by OpenRouter (if you have a site):
+            # "HTTP-Referer": "https://your-app-url",
+            # "X-Title": "ESCP ChatBOT",
+        },
+    },
+    "FIREWORKS": {
+        "base_url": "https://api.fireworks.ai/inference/v1",
+        # example: accounts/fireworks/models/llama-v3p1-8b-instruct
+        "default_model": os.getenv("MODEL_NAME", "accounts/fireworks/models/llama-v3p1-8b-instruct"),
+        "key_env": "FIREWORKS_API_KEY",
+        "secret_key": "FIREWORKS_API_KEY",
+        "extra_headers": {},
+    },
+    "DEEPINFRA": {
+        "base_url": "https://api.deepinfra.com/v1/openai",
+        # e.g. meta-llama/Meta-Llama-3.1-8B-Instruct
+        "default_model": os.getenv("MODEL_NAME", "meta-llama/Meta-Llama-3.1-8B-Instruct"),
+        "key_env": "DEEPINFRA_API_KEY",
+        "secret_key": "DEEPINFRA_API_KEY",
+        "extra_headers": {},
+    },
+}
 
-    # 2) Try Streamlit secrets (only if configured)
+cfg = PROVIDERS.get(PROVIDER, PROVIDERS["GROQ"])
+
+def get_api_key():
+    # 1) env var (works locally & on Streamlit Cloud Environment Variables)
+    k = os.getenv(cfg["key_env"])
+    if k:
+        return k
+    # 2) Streamlit Secrets (Settings → Secrets on Streamlit Cloud)
     try:
-        return st.secrets["HF_TOKEN"]
+        return st.secrets[cfg["secret_key"]]
     except Exception:
         return None
 
-HF_TOKEN = get_hf_token()
+API_KEY = get_api_key()
 
 st.set_page_config(page_title="ESCP ChatBOT", page_icon="★")
+st.title("ESCP ChatBOT")
 
-if not HF_TOKEN:
+if not API_KEY:
     st.error(
-        "HF_TOKEN not found.\n\n"
-        "Set it EITHER as an Environment Variable (HF_TOKEN) OR in Streamlit Secrets (HF_TOKEN)."
+        f"Missing API key for {PROVIDER}.\n"
+        f"Set **{cfg['key_env']}** in Streamlit → Settings → Secrets, "
+        f"or as an environment variable."
     )
-    # optional: quick diagnostics
-    has_env = bool(os.getenv("HF_TOKEN"))
-    has_secrets = False
-    try:
-        _ = st.secrets["HF_TOKEN"]
-        has_secrets = True
-    except Exception:
-        pass
     with st.sidebar.expander("Debug config"):
-        st.write({"env_HF_TOKEN": has_env, "secrets_HF_TOKEN": has_secrets})
+        st.write({"PROVIDER": PROVIDER, "needed_key_name": cfg["key_env"]})
     st.stop()
 
+# OpenAI-compatible client
+client = OpenAI(api_key=API_KEY, base_url=cfg["base_url"])
+EXTRA_HEADERS = cfg["extra_headers"]
 
-client = InferenceClient(provider="featherless-ai", api_key=HF_TOKEN)
-# ---------------- Sidebar controls ----------------
+# ---------------- Sidebar ----------------
 with st.sidebar:
     st.subheader("Settings")
-    model = st.text_input("Model", value=DEFAULT_MODEL, help="e.g., meta-llama/Llama-3.1-8B, mistralai/Mistral-7B-Instruct")
+    model = st.text_input(
+        "Model",
+        value=cfg["default_model"],
+        help="Override default model if you like."
+    )
     system_prompt = st.text_area("System prompt", value="You are a helpful assistant.", height=80)
     temperature = st.slider("Temperature", 0.0, 1.5, 0.7, 0.1)
     max_new_tokens = st.slider("Max new tokens", 16, 1024, 300, 16)
@@ -56,6 +103,7 @@ with st.sidebar:
     st.caption("If responses stop early, increase Max new tokens.")
 
     st.divider()
+    HISTORY_FILE = "history.json"
     col1, col2, col3 = st.columns(3)
     if col1.button("Clear chat"):
         st.session_state.pop("messages", None)
@@ -78,127 +126,64 @@ with st.sidebar:
         except Exception as e:
             st.error(f"Load failed: {e}")
 
-# ---------------- Client ----------------
-try:
-    client = InferenceClient(
-        provider="featherless-ai",
-        api_key=HF_TOKEN,
-    )
-except Exception as e:
-    st.error(f"Failed to init HF client: {e}")
-    st.stop()
-
 # ---------------- State ----------------
 if "messages" not in st.session_state:
     st.session_state.messages: List[Dict[str, str]] = []
 
-# ---------------- Prompt builder (Llama-friendly) ----------------
-# --- Build a clean prompt (system + short history) ---
-def build_llama_prompt(history, system: str = "You are a helpful assistant.", max_turns: int = 4) -> str:
+# ---------------- OpenAI-style chat call ----------------
+def chat_generate(messages: List[Dict[str, str]]) -> str:
     """
-    Formats as:
-      system: ...
-      user: ...
-      assistant: ...
-    Ends with 'assistant:' so the model completes that turn.
-    Keeps only the last few turns to avoid runaway patterns.
+    Calls provider via OpenAI-compatible Chat Completions.
+    messages: [{"role":"system/user/assistant","content":"..."}]
     """
-    # keep last `max_turns` messages
-    trimmed = history[-(max_turns*2):] if max_turns else history
-    lines = [f"system: {system.strip()}"]
-    for m in trimmed:
-        role = "assistant" if m["role"] == "assistant" else "user"
-        lines.append(f"{role}: {m['content']}")
-    lines.append("assistant:")
-    return "\n".join(lines)
-
-
-# --- Generate with stop sequences (prevents echoing 'user:' / 'assistant:') ---
-def generate_reply(prompt_text: str, *, stream: bool, max_tokens: int, temp: float) -> str:
-    stop_sequences = ["\nuser:", "\nassistant:", "\nsystem:"]  # <- key change
-    partial = ""
-    debug_chunks = []
-
-    if stream:
-        placeholder = st.empty()
-        try:
-            for chunk in client.text_generation(
-                prompt_text,
+    content = ""
+    try:
+        if use_stream:
+            with st.spinner("Thinking…"):
+                stream = client.chat.completions.create(
+                    model=model,
+                    messages=messages,
+                    temperature=temperature,
+                    max_tokens=max_new_tokens,
+                    stream=True,
+                    extra_headers=EXTRA_HEADERS or None,
+                )
+                placeholder = st.empty()
+                for chunk in stream:
+                    delta = chunk.choices[0].delta.content or ""
+                    if delta:
+                        content += delta
+                        placeholder.markdown(content)
+        else:
+            resp = client.chat.completions.create(
                 model=model,
-                max_new_tokens=max_tokens,
-                temperature=temp,
-                top_p=0.95,
-                repetition_penalty=1.05,
-                stream=True,
-                details=True,
-                return_full_text=False,
-                stop_sequences=stop_sequences,  # <- key change
-            ):
-                debug_chunks.append(repr(chunk))
-                piece = ""
-                if isinstance(chunk, str):
-                    piece = chunk
-                else:
-                    token_obj = getattr(chunk, "token", None)
-                    piece = getattr(token_obj, "text", None)
-                    if not piece and isinstance(chunk, dict):
-                        piece = (
-                            (chunk.get("token") or {}).get("text")
-                            or chunk.get("generated_text")
-                            or ""
-                        )
-                if not piece:
-                    continue
-                partial += piece
-                placeholder.markdown(partial)
-        except Exception as e:
-            st.warning(f"Stream error, retrying non-stream: {e}")
-
-    if not partial:
-        try:
-            out = client.text_generation(
-                prompt_text,
-                model=model,
-                max_new_tokens=max_tokens,
-                temperature=temp,
-                top_p=0.95,
-                repetition_penalty=1.05,
-                stream=False,
-                details=True,
-                return_full_text=False,
-                stop_sequences=stop_sequences,  # <- key change
+                messages=messages,
+                temperature=temperature,
+                max_tokens=max_new_tokens,
+                extra_headers=EXTRA_HEADERS or None,
             )
-            partial = out if isinstance(out, str) else (
-                getattr(out, "generated_text", "") or (out.get("generated_text", "") if isinstance(out, dict) else "")
-            )
-        except Exception as e2:
-            st.error(f"Generation failed: {e2}")
-            partial = ""
+            content = resp.choices[0].message.content or ""
+    except Exception as e:
+        st.error(f"Generation failed: {e}")
+    return content.strip()
 
-    with st.sidebar.expander("Debug: last chunks", expanded=False):
-        st.code("\n".join(debug_chunks[-10:]) or "(no chunks)")
+# ---------------- UI: render history ----------------
+for m in st.session_state.messages:
+    with st.chat_message(m["role"]):
+        st.markdown(m["content"])
 
-    return (partial or "").strip()
-
-# ---------------- UI: History ----------------
-for msg in st.session_state.messages:
-    with st.chat_message(msg["role"]):
-        st.markdown(msg["content"])
-
-# ---------------- Handle Input ----------------
-if prompt := st.chat_input("Type your message..."):
-    # Add user message
+# ---------------- Handle input ----------------
+if prompt := st.chat_input("Type your message…"):
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
         st.markdown(prompt)
 
-    # Build prompt & generate
-    full_prompt = build_llama_prompt(st.session_state.messages, system="You are a helpful assistant.")
+    # Compose messages (system + history)
+    msgs = [{"role": "system", "content": system_prompt}]
+    msgs.extend(st.session_state.messages)
 
     with st.chat_message("assistant"):
-        with st.spinner("Thinking..."):
-            reply = generate_reply(full_prompt, stream=use_stream, max_tokens=max_new_tokens, temp=temperature)
-            st.markdown(reply or "_(no text returned)_")
+        reply = chat_generate(msgs)
+        st.markdown(reply or "_(no text returned)_")
 
-    # Save assistant reply
     st.session_state.messages.append({"role": "assistant", "content": reply})
