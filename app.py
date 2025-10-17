@@ -1,6 +1,6 @@
 import os
 import json
-from typing import List, Dict
+from typing import List, Dict, Optional, Tuple
 import hashlib
 import pathlib
 import re
@@ -17,15 +17,13 @@ PROVIDER = os.getenv("PROVIDER", "GROQ").upper()  # GROQ | TOGETHER | OPENROUTER
 PROVIDERS = {
     "GROQ": {
         "base_url": "https://api.groq.com/openai/v1",
-        # see https://console.groq.com for latest models
         "default_model": os.getenv("MODEL_NAME", "llama-3.1-8b-instant"),
         "key_env": "GROQ_API_KEY",
         "secret_key": "GROQ_API_KEY",
-        "extra_headers": {},  # none needed
+        "extra_headers": {},
     },
     "TOGETHER": {
         "base_url": "https://api.together.xyz/v1",
-        # good choices: meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo, mistralai/Mixtral-8x7B-Instruct-v0.1
         "default_model": os.getenv("MODEL_NAME", "meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo"),
         "key_env": "TOGETHER_API_KEY",
         "secret_key": "TOGETHER_API_KEY",
@@ -33,19 +31,16 @@ PROVIDERS = {
     },
     "OPENROUTER": {
         "base_url": "https://openrouter.ai/api/v1",
-        # many free/cheap models; e.g. meta-llama/llama-3.1-8b-instruct:free (availability varies)
         "default_model": os.getenv("MODEL_NAME", "meta-llama/llama-3.1-8b-instruct"),
         "key_env": "OPENROUTER_API_KEY",
         "secret_key": "OPENROUTER_API_KEY",
         "extra_headers": {
-            # Optional but recommended by OpenRouter (if you have a site):
             # "HTTP-Referer": "https://your-app-url",
             # "X-Title": "ESCP ChatBOT",
         },
     },
     "FIREWORKS": {
         "base_url": "https://api.fireworks.ai/inference/v1",
-        # example: accounts/fireworks/models/llama-v3p1-8b-instruct
         "default_model": os.getenv("MODEL_NAME", "accounts/fireworks/models/llama-v3p1-8b-instruct"),
         "key_env": "FIREWORKS_API_KEY",
         "secret_key": "FIREWORKS_API_KEY",
@@ -53,7 +48,6 @@ PROVIDERS = {
     },
     "DEEPINFRA": {
         "base_url": "https://api.deepinfra.com/v1/openai",
-        # e.g. meta-llama/Meta-Llama-3.1-8B-Instruct
         "default_model": os.getenv("MODEL_NAME", "meta-llama/Meta-Llama-3.1-8B-Instruct"),
         "key_env": "DEEPINFRA_API_KEY",
         "secret_key": "DEEPINFRA_API_KEY",
@@ -63,22 +57,26 @@ PROVIDERS = {
 
 cfg = PROVIDERS.get(PROVIDER, PROVIDERS["GROQ"])
 
-# ---------------- Embeddings + KB config ----------------
+# ---------------- Embeddings + KB/FAQ config ----------------
 EMBEDDING_MODELS = {
     "GROQ": "text-embedding-3-small",
     "TOGETHER": "togethercomputer/m2-bert-80M-8k-retrieval",
     "OPENROUTER": "openrouter/clip-vit-large-patch14",
     "FIREWORKS": "nomic-ai/nomic-embed-text-v1",
-    "DEEPINFRA": "text-embedding-3-small"
+    "DEEPINFRA": "text-embedding-3-small",
 }
 EMBED_MODEL = os.getenv("EMBEDDING_MODEL", EMBEDDING_MODELS.get(PROVIDER, "text-embedding-3-small"))
-KB_DIR = os.getenv("KB_DIR", "kb")
-KB_INDEX = os.getenv("KB_INDEX", "kb_index.json")  # reserved if you want to persist to disk later
 
+KB_DIR = os.getenv("KB_DIR", "kb")
 CHUNK_SIZE = 900       # characters
 CHUNK_OVERLAP = 150    # characters
 TOP_K = 4
 USE_KB_DEFAULT = True  # sidebar toggle default
+
+# FAQ matching thresholds
+FAQ_MIN_COSINE = 0.80          # use FAQ answer if cosine >= this (when embeddings available)
+FAQ_MIN_KEYWORD_OVERLAP = 0.55 # use FAQ answer if keyword overlap >= this (fallback)
+FAQ_TOP_K = 1
 
 # ---------------- KB data structures & helpers ----------------
 @dataclass
@@ -140,6 +138,9 @@ def cosine(a, b):
     return dot / (na * nb)
 
 def keyword_score(q: str, t: str) -> float:
+    """
+    Simple TF-like overlap (unbounded). Kept for KB ranking.
+    """
     q_tokens = [w for w in re.findall(r"\b\w+\b", q.lower()) if len(w) > 2]
     t_tokens = re.findall(r"\b\w+\b", t.lower())
     if not q_tokens or not t_tokens:
@@ -147,13 +148,22 @@ def keyword_score(q: str, t: str) -> float:
     hits = sum(t_tokens.count(w) for w in set(q_tokens))
     return hits / (len(set(q_tokens)) + 1e-6)
 
+def keyword_overlap_01(a: str, b: str) -> float:
+    """
+    Normalized token overlap in [0,1] for FAQ matching (safer thresholding).
+    """
+    at = set(w for w in re.findall(r"\b\w+\b", a.lower()) if len(w) > 2)
+    bt = set(w for w in re.findall(r"\b\w+\b", b.lower()) if len(w) > 2)
+    if not at or not bt:
+        return 0.0
+    inter = len(at & bt)
+    return inter / max(1, len(at))
+
 # ---------------- Client bootstrap ----------------
 def get_api_key():
-    # 1) env var (works locally & on Streamlit Cloud Environment Variables)
     k = os.getenv(cfg["key_env"])
     if k:
         return k
-    # 2) Streamlit Secrets (Settings → Secrets on Streamlit Cloud)
     try:
         return st.secrets[cfg["secret_key"]]
     except Exception:
@@ -177,7 +187,7 @@ if not API_KEY:
 client = OpenAI(api_key=API_KEY, base_url=cfg["base_url"])  # OpenAI-compatible client
 EXTRA_HEADERS = cfg["extra_headers"]
 
-def embed_texts(texts: list[str]) -> list[list[float]]:
+def embed_texts(texts: List[str]) -> List[List[float]]:
     """
     Try to call an OpenAI-compatible embeddings endpoint via the selected provider.
     If that fails, raise to trigger keyword fallback.
@@ -192,6 +202,7 @@ def embed_texts(texts: list[str]) -> list[list[float]]:
     except Exception as e:
         raise RuntimeError(f"Embeddings unavailable on {PROVIDER} ({EMBED_MODEL}): {e}")
 
+# ---------------- KB index ----------------
 @st.cache_resource(show_spinner=False)
 def get_kb_index():
     chunks = build_kb_chunks()
@@ -205,12 +216,11 @@ def get_kb_index():
         index["embeddings"] = None  # fallback will be keyword scoring
     return index
 
-def retrieve(query: str, k: int = TOP_K):
+def retrieve_kb(query: str, k: int = TOP_K):
     idx = get_kb_index()
     chunks = idx["chunks"]
     if not chunks:
         return []
-
     # Embedding path
     if idx["embeddings"] is not None:
         try:
@@ -222,11 +232,81 @@ def retrieve(query: str, k: int = TOP_K):
             return scored[:k]
         except Exception:
             pass
-
     # Fallback keyword path
     scored = [(keyword_score(query, c.text), c) for c in chunks]
     scored.sort(key=lambda x: x[0], reverse=True)
     return scored[:k]
+
+# ---------------- FAQ index (questions only) ----------------
+def load_faqs(path: str = "faqs.json") -> List[Dict[str, str]]:
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        # Expect objects with: theme, q, a
+        cleaned = []
+        for it in data:
+            q = (it.get("q") or "").strip()
+            a = (it.get("a") or "").strip()
+            theme = (it.get("theme") or "FAQ").strip()
+            if q and a:
+                cleaned.append({"q": q, "a": a, "theme": theme})
+        return cleaned
+    except FileNotFoundError:
+        return []
+    except Exception:
+        return []
+
+@st.cache_resource(show_spinner=False)
+def get_faq_index():
+    items = load_faqs()
+    index = {"questions": [it["q"] for it in items], "answers": [it["a"] for it in items],
+             "themes": [it["theme"] for it in items], "embeddings": None}
+    if not items:
+        return index
+    # Try to embed questions
+    try:
+        q_embs = embed_texts(index["questions"])
+        index["embeddings"] = q_embs
+    except Exception:
+        index["embeddings"] = None
+    return index
+
+def match_faq(query: str) -> Optional[Tuple[str, str, float]]:
+    """
+    Try to match a user query to a single FAQ answer.
+    Returns (answer, question, score) or None.
+    """
+    idx = get_faq_index()
+    questions = idx["questions"]
+    answers = idx["answers"]
+    themes = idx["themes"]
+
+    if not questions:
+        return None
+
+    # Embedding path (cosine)
+    if idx["embeddings"] is not None:
+        try:
+            qv = embed_texts([query])[0]
+            scores = [(cosine(qv, ev), i) for i, ev in enumerate(idx["embeddings"])]
+            scores.sort(reverse=True, key=lambda x: x[0])
+            top_score, top_i = scores[0]
+            if top_score >= FAQ_MIN_COSINE:
+                return answers[top_i], questions[top_i], float(top_score)
+        except Exception:
+            pass
+
+    # Fallback keyword overlap in [0,1]
+    best_i = -1
+    best_s = -1.0
+    for i, q in enumerate(questions):
+        s = keyword_overlap_01(query, q)
+        if s > best_s:
+            best_s, best_i = s, i
+    if best_i >= 0 and best_s >= FAQ_MIN_KEYWORD_OVERLAP:
+        return answers[best_i], questions[best_i], float(best_s)
+
+    return None
 
 # ---------------- Sidebar ----------------
 with st.sidebar:
@@ -250,25 +330,13 @@ with st.sidebar:
         get_kb_index.clear()
         get_kb_index()
         st.success("KB index rebuilt.")
+    if colB.button("Reload FAQs"):
+        get_faq_index.clear()
+        get_faq_index()
+        st.success("FAQs reloaded.")
 
     kb_files = load_kb_files()
     st.caption(f"{len(kb_files)} KB documents found in `{KB_DIR}/`")
-    if st.checkbox("Preview KB files", value=False):
-        for p, _ in kb_files[:20]:
-            st.write("•", p)
-
-    st.divider()
-    st.subheader("FAQs")
-    try:
-        with open("faqs.json", "r", encoding="utf-8") as f:
-            faqs = json.load(f)
-        for item in faqs:
-            with st.expander(item.get("q", "FAQ")):
-                st.markdown(item.get("a", ""))
-    except FileNotFoundError:
-        st.info("Create a `faqs.json` file to show FAQs here.")
-    except Exception as e:
-        st.error(f"Failed to load FAQs: {e}")
 
     st.divider()
     HISTORY_FILE = "history.json"
@@ -346,43 +414,52 @@ if prompt := st.chat_input("Type your message…"):
     with st.chat_message("user"):
         st.markdown(prompt)
 
-    # --- Compose messages (system + history), with optional KB context ---
-    final_system_prompt = system_prompt or "You are a helpful assistant."
-    if use_kb and prompt:
-        hits = retrieve(prompt, k=TOP_K)
-        if hits:
-            sources_md = []
-            ctx_snippets = []
-            for score, chunk in hits:
-                rel = f"{score:.3f}"
-                sources_md.append(f"- `{os.path.basename(chunk.doc_path)}` (score {rel})")
-                snippet = chunk.text.strip()
-                if len(snippet) > 1200:
-                    snippet = snippet[:1200] + "…"
-                ctx_snippets.append(f"[SOURCE: {os.path.basename(chunk.doc_path)}]\n{snippet}")
-            kb_context = "\n\n".join(ctx_snippets)
-            kb_context_blocks = [
-                "You are a helpful assistant. Use the following knowledge base excerpts as trusted context. If the user asks about ESCP internships/PECS or related processes, rely on these. If uncertain, say so briefly.",
-                "\n---\nKB CONTEXT START\n",
-                kb_context,
-                "\nKB CONTEXT END\n---\n",
-                "When answering, cite the filename(s) you used in square brackets, e.g., [internship_policy.md]."
-            ]
-            final_system_prompt = (system_prompt or "You are a helpful assistant.") + "\n\n" + "\n".join(kb_context_blocks)
+    # --- 1) Try FAQ first (exact canned answer if strong match) ---
+    faq_hit = match_faq(prompt)
+    if faq_hit:
+        answer, matched_q, score = faq_hit
+        with st.chat_message("assistant"):
+            st.markdown(answer)
+            st.caption(f"Matched FAQ: “{matched_q}”  •  score={score:.2f}")
+        st.session_state.messages.append({"role": "assistant", "content": answer})
+    else:
+        # --- 2) Otherwise, compose messages (system + history), with optional KB context ---
+        final_system_prompt = system_prompt or "You are a helpful assistant."
+        if use_kb:
+            hits = retrieve_kb(prompt, k=TOP_K)
+            if hits:
+                sources_md = []
+                ctx_snippets = []
+                for score, chunk in hits:
+                    rel = f"{score:.3f}"
+                    sources_md.append(f"- `{os.path.basename(chunk.doc_path)}` (score {rel})")
+                    snippet = chunk.text.strip()
+                    if len(snippet) > 1200:
+                        snippet = snippet[:1200] + "…"
+                    ctx_snippets.append(f"[SOURCE: {os.path.basename(chunk.doc_path)}]\n{snippet}")
+                kb_context = "\n\n".join(ctx_snippets)
+                kb_context_blocks = [
+                    "You are a helpful assistant. Use the following knowledge base excerpts as trusted context. If the user asks about ESCP internships/PECS or related processes, rely on these. If uncertain, say so briefly.",
+                    "\n---\nKB CONTEXT START\n",
+                    kb_context,
+                    "\nKB CONTEXT END\n---\n",
+                    "When answering, cite the filename(s) you used in square brackets, e.g., [internship_policy.md]."
+                ]
+                final_system_prompt = (system_prompt or "You are a helpful assistant.") + "\n\n" + "\n".join(kb_context_blocks)
 
-    msgs = [{"role": "system", "content": final_system_prompt}]
-    msgs.extend(st.session_state.messages)
+        msgs = [{"role": "system", "content": final_system_prompt}]
+        msgs.extend(st.session_state.messages)
 
-    with st.chat_message("assistant"):
-        reply = chat_generate(msgs)
-        st.markdown(reply or "_(no text returned)_")
+        with st.chat_message("assistant"):
+            reply = chat_generate(msgs)
+            st.markdown(reply or "_(no text returned)_")
 
-        # Optional: show “Sources used” for transparency when KB is on
-        if use_kb and prompt:
-            hits_for_display = retrieve(prompt, k=TOP_K)
-            if hits_for_display:
-                with st.expander("Sources used"):
-                    for score, chunk in hits_for_display:
-                        st.write(f"• {os.path.basename(chunk.doc_path)}  (score {score:.3f})")
+            # Optional: show “Sources used” for transparency when KB is on
+            if use_kb:
+                hits_for_display = retrieve_kb(prompt, k=TOP_K)
+                if hits_for_display:
+                    with st.expander("Sources used"):
+                        for score, chunk in hits_for_display:
+                            st.write(f"• {os.path.basename(chunk.doc_path)}  (score {score:.3f})")
 
-    st.session_state.messages.append({"role": "assistant", "content": reply})
+        st.session_state.messages.append({"role": "assistant", "content": reply if reply else ""})
