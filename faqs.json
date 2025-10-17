@@ -1,233 +1,168 @@
+
 [
   {
     "theme": "Internships",
-    "q_en": "How do I submit my internship agreement?",
-    "q_fr": "Comment soumettre ma convention de stage ?",
-    "a_en": "Submit it in PECS → Internships → “New Agreement”. Processing usually takes 3–5 business days. Use your ESCP email and upload all required signatures.",
-    "a_fr": "Déposez-la dans PECS → Internships → « New Agreement ». Le traitement prend généralement 3 à 5 jours ouvrés. Utilisez votre e-mail ESCP et joignez toutes les signatures requises."
+    "q": "How do I submit my internship agreement?",
+    "a": "Submit it in PECS → Internships → “New Agreement”. Processing usually takes 3–5 business days. Use your ESCP email and upload all required signatures."
   },
   {
     "theme": "Internships",
-    "q_en": "Who do I contact for urgent approvals?",
-    "q_fr": "Qui contacter pour une approbation urgente ?",
-    "a_en": "Email internships@escp.eu with subject: [URGENT] Approval Needed. Include your student ID, programme, host company, and start date.",
-    "a_fr": "Envoyez un e-mail à internships@escp.eu avec l’objet : [URGENT] Approval Needed. Indiquez votre ID étudiant, programme, entreprise d’accueil et date de début."
+    "q": "Who do I contact for urgent approvals?",
+    "a": "Email internships@escp.eu with the subject: [URGENT] Approval Needed. Include your student ID, programme, host company, and start date."
   },
   {
     "theme": "Payments & Billing",
-    "q_en": "How to update my payment method/financial data?",
-    "q_fr": "Comment mettre à jour ma méthode de paiement/mes données financières ?",
-    "a_en": "Go to the student portal → Billing/Payments → Payment Method. Update card/SEPA details or third-party payer info, then save. Changes apply to future invoices.",
-    "a_fr": "Allez sur le portail étudiant → Facturation/Paiements → Méthode de paiement. Mettez à jour votre carte/SEPA ou le tiers payeur, puis enregistrez. Les changements s’appliquent aux factures futures."
+    "q": "How to update my payment method/financial data?",
+    "a": "Go to the student portal → Billing/Payments → Payment Method. Update card/SEPA details or third-party payer info, then save. Changes apply to future invoices."
   },
   {
     "theme": "Payments & Billing",
-    "q_en": "What payment methods are available?",
-    "q_fr": "Quelles sont les méthodes de paiement disponibles ?",
-    "a_en": "We accept credit/debit card, SEPA direct debit, and bank transfer. For corporate payers, bank transfer is recommended. American Express is available on request (fees may apply).",
-    "a_fr": "Nous acceptons carte bancaire, prélèvement SEPA et virement. Pour les tiers payeurs, privilégiez le virement. American Express est possible sur demande (frais applicables)."
+    "q": "What payment methods are available?",
+    "a": "We accept credit/debit card, SEPA direct debit, and bank transfer. For corporate payers, bank transfer is recommended. American Express may be available on request (fees may apply)."
   },
   {
     "theme": "Payments & Billing",
-    "q_en": "What is my current payment method? Where can I find it?",
-    "q_fr": "Quelle est ma méthode de paiement choisie ? Où puis-je la trouver ?",
-    "a_en": "Open the student portal → Billing/Payments → Payment Method. Your active method appears at the top with the last update date.",
-    "a_fr": "Ouvrez le portail étudiant → Facturation/Paiements → Méthode de paiement. La méthode active s’affiche en haut avec la date de mise à jour."
+    "q": "What is my current payment method? Where can I find it?",
+    "a": "Open the student portal → Billing/Payments → Payment Method. Your active method appears at the top with the last update date."
   },
   {
     "theme": "Payments & Billing",
-    "q_en": "Could you send me my payment schedule?",
-    "q_fr": "Pouvez-vous m’envoyer mon échéancier ?",
-    "a_en": "You can download it in the student portal → Billing → Payment Schedule. If you need a signed copy, email invoicing@escp.eu.",
-    "a_fr": "Téléchargez-le dans le portail étudiant → Facturation → Échéancier. Pour une version signée, écrivez à invoicing@escp.eu."
+    "q": "Could you send me my payment schedule?",
+    "a": "You can download it in the student portal → Billing → Payment Schedule. If you need a signed copy, email invoicing@escp.eu."
   },
   {
     "theme": "Payments & Billing",
-    "q_en": "My payment schedule is wrong and doesn't take into account the deposit and/or my scholarship. Are you going to update it?",
-    "q_fr": "Mon échéancier est erroné et ne tient pas compte de la bourse et de l'acompte. Allez-vous mettre à jour cela ?",
-    "a_en": "Yes. Please send your student ID and proof (deposit receipt, scholarship letter) to invoicing@escp.eu. We’ll correct the schedule and notify you when updated.",
-    "a_fr": "Oui. Merci d’envoyer votre ID étudiant et les justificatifs (reçu d’acompte, attestation de bourse) à invoicing@escp.eu. Nous corrigerons l’échéancier et vous confirmerons la mise à jour."
+    "q": "My payment schedule is wrong and doesn't take into account the deposit and/or my scholarship. Are you going to update it?",
+    "a": "Yes. Please send your student ID and proof (deposit receipt, scholarship letter) to invoicing@escp.eu. We’ll correct the schedule and notify you when it’s updated."
   },
   {
     "theme": "Payments & Billing",
-    "q_en": "Can I pay my tuition fees and alumni fees together or should I pay them separately?",
-    "q_fr": "Puis-je payer mes frais de scolarité et mes frais d'ancien étudiant ensemble ou dois-je les payer séparément ?",
-    "a_en": "Please pay them separately. Tuition fees and alumni fees are managed on different ledgers, so they require distinct payments.",
-    "a_fr": "Merci d’effectuer deux paiements distincts. Les frais de scolarité et les frais alumni sont gérés sur des comptes différents."
+    "q": "Can I pay my tuition fees and alumni fees together or should I pay them separately?",
+    "a": "Please pay them separately. Tuition fees and alumni fees are managed on different ledgers, so they require distinct payments."
   },
   {
     "theme": "Payments & Billing",
-    "q_en": "Could you send me my invoice?",
-    "q_fr": "Pouvez-vous m’envoyer ma facture ?",
-    "a_en": "Invoices are available in the student portal → Billing → Invoices. For a stamped copy or company-specific details, email invoicing@escp.eu.",
-    "a_fr": "Les factures sont disponibles sur le portail étudiant → Facturation → Factures. Pour une version tamponnée ou des mentions spécifiques, écrivez à invoicing@escp.eu."
+    "q": "Could you send me my invoice?",
+    "a": "Invoices are available in the student portal → Billing → Invoices. For a stamped copy or company-specific details, email invoicing@escp.eu."
   },
   {
     "theme": "Payments & Billing",
-    "q_en": "What is the deadline to pay the invoice?",
-    "q_fr": "Quelle est la date d’échéance pour payer la facture ?",
-    "a_en": "The due date is printed on the invoice. Late payments may incur administrative fees. If needed, request an extension before the due date.",
-    "a_fr": "La date d’échéance figure sur la facture. Des frais administratifs peuvent s’appliquer en cas de retard. Demandez un report avant l’échéance si nécessaire."
+    "q": "What is the deadline to pay the invoice?",
+    "a": "The due date is printed on the invoice. Late payments may incur administrative fees. If needed, request an extension before the due date."
   },
   {
     "theme": "Payments & Billing",
-    "q_en": "Do I have to pay the alumni fees?",
-    "q_fr": "Dois-je payer les frais alumni ?",
-    "a_en": "Alumni fees are part of the programme’s financial package when applicable. Check your admission letter or invoice details. Contact alumni@escp.eu for scope and benefits.",
-    "a_fr": "Les frais alumni font partie du package financier du programme le cas échéant. Vérifiez votre lettre d’admission ou votre facture. Contactez alumni@escp.eu pour les détails et avantages."
+    "q": "Do I have to pay the alumni fees?",
+    "a": "Alumni fees are part of the programme’s financial package when applicable. Check your admission letter or invoice details. Contact alumni@escp.eu for scope and benefits."
   },
   {
     "theme": "Payments & Billing",
-    "q_en": "Could you send me a payment certificate?",
-    "q_fr": "Pouvez-vous m’envoyer un certificat de paiement ?",
-    "a_en": "Yes. Request it via the student portal → Certificates → Payment Certificate or email invoicing@escp.eu with your invoice number.",
-    "a_fr": "Oui. Demandez-le via le portail étudiant → Attestations → Attestation de paiement ou écrivez à invoicing@escp.eu avec le numéro de facture."
+    "q": "Could you send me a payment certificate?",
+    "a": "Yes. Request it via the student portal → Certificates → Payment Certificate, or email invoicing@escp.eu with your invoice number."
   },
   {
     "theme": "Payments & Billing",
-    "q_en": "I am in a gap year, should I pay tuition fees for this year?",
-    "q_fr": "Je suis en année de césure, dois-je payer des frais de scolarité cette année ?",
-    "a_en": "Gap-year tuition depends on your programme rules. Some programmes charge a reduced administrative fee instead of full tuition. Check your programme handbook or ask your programme office.",
-    "a_fr": "Cela dépend du règlement de votre programme. Certains programmes facturent des frais administratifs réduits au lieu de la scolarité complète. Consultez le guide du programme ou contactez votre programme office."
+    "q": "I am in a gap year, should I pay tuition fees for this year?",
+    "a": "It depends on your programme rules. Some programmes charge a reduced administrative fee instead of full tuition. Check your programme handbook or ask your programme office."
   },
   {
     "theme": "Payments & Billing",
-    "q_en": "I am in an apprenticeship, should I pay tuition fees for this year?",
-    "q_fr": "Je suis en apprentissage. Dois-je payer des frais de scolarité ?",
-    "a_en": "In apprenticeships, fees are typically covered by the company/OPCO according to your contract. Confirm with your apprenticeship coordinator and provide the funding agreement to invoicing@escp.eu.",
-    "a_fr": "En apprentissage, les frais sont généralement pris en charge par l’entreprise/OPCO selon votre contrat. Confirmez avec votre coordinateur et transmettez l’accord de prise en charge à invoicing@escp.eu."
+    "q": "I am in an apprenticeship, should I pay tuition fees for this year?",
+    "a": "In apprenticeships, fees are typically covered by the company/OPCO according to your contract. Confirm with your apprenticeship coordinator and provide the funding agreement to invoicing@escp.eu."
   },
   {
     "theme": "Payments & Billing",
-    "q_en": "I have a sister or a brother registered this year at ESCP in addition to my own registration. Is there any discount in this situation?",
-    "q_fr": "J’ai un frère ou une sœur inscrit(e) à l’ESCP cette année, tout comme moi. Y a-t-il une remise dans cette situation ?",
-    "a_en": "Sibling discounts may exist for some programmes. Email admissions or invoicing@escp.eu with both student IDs to check your eligibility.",
-    "a_fr": "Des remises fratrie peuvent exister selon les programmes. Écrivez à admissions ou à invoicing@escp.eu avec vos deux IDs étudiants pour vérifier l’éligibilité."
+    "q": "I have a sister or a brother registered this year at ESCP in addition to my own registration. Is there any discount in this situation?",
+    "a": "Sibling discounts may exist for some programmes. Email admissions or invoicing@escp.eu with both student IDs to check your eligibility."
   },
   {
     "theme": "Payments & Billing",
-    "q_en": "I resign from the program and I would like to get my deposit back. How to proceed?",
-    "q_fr": "Je démissionne et je souhaite récupérer mon acompte. Comment faire ? est-ce possible ?",
-    "a_en": "Withdrawal and deposit refunds follow the terms in your admission/financial agreement and withdrawal deadlines. Submit a formal withdrawal request to your programme office and contact invoicing@escp.eu for the financial assessment.",
-    "a_fr": "Les remboursements d’acompte suivent les conditions de votre contrat d’admission/financier et les délais de désistement. Déposez une demande officielle auprès de votre programme office et contactez invoicing@escp.eu pour l’évaluation financière."
+    "q": "I resign from the program and I would like to get my deposit back. How to proceed?",
+    "a": "Withdrawal and deposit refunds follow the terms in your admission/financial agreement and the withdrawal deadlines. Submit a formal withdrawal request to your programme office and contact invoicing@escp.eu for the financial assessment."
   },
   {
     "theme": "Payments & Billing",
-    "q_en": "How much should I pay if I resign from the program now?",
-    "q_fr": "Combien dois-je payer si je démissionne maintenant ? Si avant les cours ? Si après les cours ?",
-    "a_en": "Amounts depend on the withdrawal date and programme policy (administrative fees, non-refundable deposits, prorated tuition). Request a statement from invoicing@escp.eu after submitting your withdrawal notice.",
-    "a_fr": "Les montants dépendent de la date de désistement et de la politique du programme (frais administratifs, acomptes non remboursables, prorata de scolarité). Demandez un décompte à invoicing@escp.eu après votre notification de désistement."
+    "q": "How much should I pay if I resign from the program now?",
+    "a": "Amounts depend on the withdrawal date and programme policy (administrative fees, non-refundable deposits, prorated tuition). Request a statement from invoicing@escp.eu after submitting your withdrawal notice."
   },
   {
     "theme": "Payments & Billing",
-    "q_en": "Can I pay the tuition fees from my company or professional bank account?",
-    "q_fr": "Puis-je payer mes frais de scolarité via une société ou un compte bancaire professionnel ?",
-    "a_en": "Yes. Add a third-party payer in the portal and request a pro-forma invoice with company details. Use bank transfer with the invoice reference.",
-    "a_fr": "Oui. Ajoutez un tiers payeur dans le portail et demandez une facture pro forma avec les informations de l’entreprise. Réglez par virement avec la référence de facture."
+    "q": "Can I pay the tuition fees from my company or professional bank account?",
+    "a": "Yes. Add a third-party payer in the portal and request a pro-forma invoice with company details. Use bank transfer with the invoice reference."
   },
   {
     "theme": "Payments & Billing",
-    "q_en": "I am waiting for my student loan. Could I have extra time to pay the invoice?",
-    "q_fr": "J’attends un prêt étudiant. Puis-je attendre avant de payer ma facture ?",
-    "a_en": "You can request a short extension by emailing invoicing@escp.eu with proof of loan processing and the expected disbursement date.",
-    "a_fr": "Vous pouvez demander un court report en écrivant à invoicing@escp.eu avec une preuve de traitement du prêt et la date de versement prévue."
+    "q": "I am waiting for my student loan. Could I have extra time to pay the invoice?",
+    "a": "You can request a short extension by emailing invoicing@escp.eu with proof of loan processing and the expected disbursement date."
   },
   {
     "theme": "Payments & Billing",
-    "q_en": "Do you have partner banks?",
-    "q_fr": "Avez-vous des banques partenaires ?",
-    "a_en": "Yes, partner banks may vary by campus and programme. Contact your programme office or financialaid@escp.eu for the current list.",
-    "a_fr": "Oui, les banques partenaires varient selon le campus et le programme. Contactez votre programme office ou financialaid@escp.eu pour la liste à jour."
+    "q": "Do you have partner banks?",
+    "a": "Yes, partner banks may vary by campus and programme. Contact your programme office or financialaid@escp.eu for the current list."
   },
   {
     "theme": "Payments & Billing",
-    "q_en": "I have financial difficulties. Who should I contact?",
-    "q_fr": "J'ai des difficultés financières. Qui dois-je contacter ?",
-    "a_en": "Reach out to financialaid@escp.eu (confidential) and copy your programme office. We can review payment plans, scholarships, or emergency support options.",
-    "a_fr": "Contactez financialaid@escp.eu (confidentiel) en mettant votre programme office en copie. Nous pouvons étudier un échéancier, des bourses ou des aides d’urgence."
+    "q": "I have financial difficulties. Who should I contact?",
+    "a": "Reach out to financialaid@escp.eu (confidential) and copy your programme office. We can review payment plans, scholarships, or emergency support options."
   },
   {
     "theme": "Payments & Billing",
-    "q_en": "I would like to pay by American Express card. How to proceed?",
-    "q_fr": "J'aimerais payer par carte American Express. Comment procéder ?",
-    "a_en": "AMEX is available in some cases. Email invoicing@escp.eu to enable it for your invoice (processing fees may apply), or use bank transfer/SEPA.",
-    "a_fr": "AMEX est disponible dans certains cas. Écrivez à invoicing@escp.eu pour l’activer sur votre facture (des frais peuvent s’appliquer), ou utilisez virement/SEPA."
+    "q": "I would like to pay by American Express card. How to proceed?",
+    "a": "AMEX is available in some cases. Email invoicing@escp.eu to enable it for your invoice (processing fees may apply), or use bank transfer/SEPA."
   },
   {
     "theme": "Payments & Billing",
-    "q_en": "I received an email from invoicing@escp.eu in my spam folder. Is this email legit?",
-    "q_fr": "J'ai reçu un e-mail dans mes courriers indésirables en provenance de l'adresse invoicing@escp.eu. Cet email est-il sûr ?",
-    "a_en": "Yes, that is the official billing address. Mark it as safe and reply from your ESCP email. Do not share card details by email; use the portal’s secure payment page.",
-    "a_fr": "Oui, c’est l’adresse officielle de facturation. Marquez-la comme sûre et répondez depuis votre e-mail ESCP. Ne partagez pas de données de carte par e-mail ; utilisez la page de paiement sécurisée du portail."
+    "q": "I received an email from invoicing@escp.eu in my spam folder. Is this email legit?",
+    "a": "Yes, that is the official billing address. Mark it as safe and reply from your ESCP email. Do not share card details by email; use the portal’s secure payment page."
   },
   {
     "theme": "Payments & Billing",
-    "q_en": "I modified my payment method, but the previous one is displayed on the invoice. Could you update it?",
-    "q_fr": "J'ai changé de méthode de paiement, mais c'est l'ancienne qui apparaît sur la facture. Pouvez-vous mettre à jour cela ?",
-    "a_en": "Invoices already issued keep the original method. We can reissue on request if still unpaid. Email invoicing@escp.eu with the invoice number.",
-    "a_fr": "Les factures déjà émises conservent la méthode initiale. Nous pouvons réémettre sur demande si elle n’est pas réglée. Écrivez à invoicing@escp.eu avec le numéro de facture."
+    "q": "I modified my payment method, but the previous one is displayed on the invoice. Could you update it?",
+    "a": "Invoices already issued keep the original method. We can reissue on request if still unpaid. Email invoicing@escp.eu with the invoice number."
   },
   {
     "theme": "Payments & Billing",
-    "q_en": "I received my post M2 invoice but I dispute it as I already paid everything. Who should I contact?",
-    "q_fr": "J'ai reçu ma facture post M2 mais je la conteste car j'avais terminé toutes mes obligations. Qui dois-contacter ?",
-    "a_en": "Contact invoicing@escp.eu with proof of payment and your student ID. We’ll investigate and confirm the outcome by email.",
-    "a_fr": "Contactez invoicing@escp.eu avec votre justificatif de paiement et votre ID étudiant. Nous analyserons la situation et vous répondrons par e-mail."
+    "q": "I received my post M2 invoice but I dispute it as I already paid everything. Who should I contact?",
+    "a": "Contact invoicing@escp.eu with proof of payment and your student ID. We’ll investigate and confirm the outcome by email."
   },
   {
     "theme": "Scholarships",
-    "q_en": "I have a question about scholarships. Who should I contact?",
-    "q_fr": "J’ai une question à propos des bourses. Qui dois-je contacter ?",
-    "a_en": "Write to financialaid@escp.eu and include your programme, campus, and question. They will advise on eligibility, timelines, and documents.",
-    "a_fr": "Écrivez à financialaid@escp.eu en précisant votre programme, campus et question. L’équipe vous informera sur l’éligibilité, les délais et les justificatifs."
+    "q": "I have a question about scholarships. Who should I contact?",
+    "a": "Write to financialaid@escp.eu and include your programme, campus, and question. They will advise on eligibility, timelines, and documents."
   },
   {
     "theme": "Scholarships",
-    "q_en": "I received a scholarship, but I already paid my tuition fees. Will you refund me or apply the scholarship to next year's bill?",
-    "q_fr": "J’ai obtenu une bourse mais j’ai déjà payé l’intégralité de ma facture. Allez-vous me rembourser ou l’appliquer sur la facture de l’année prochaine ?",
-    "a_en": "Depending on timing and policy, we can issue a partial refund or credit a future invoice. Email financialaid@escp.eu and invoicing@escp.eu with your award letter.",
-    "a_fr": "Selon le calendrier et la politique, nous pouvons effectuer un remboursement partiel ou créditer une facture future. Écrivez à financialaid@escp.eu et invoicing@escp.eu avec l’attestation de bourse."
+    "q": "I received a scholarship, but I already paid my tuition fees. Will you refund me or apply the scholarship to next year's bill?",
+    "a": "Depending on timing and policy, we can issue a partial refund or credit a future invoice. Email financialaid@escp.eu and invoicing@escp.eu with your award letter."
   },
   {
     "theme": "Aurion/Intranet",
-    "q_en": "My intranet is blocked. Could you please unlock it?",
-    "q_fr": "Mon accès intranet est bloqué. Pouvez-vous le rétablir ?",
-    "a_en": "Blocks are usually linked to unpaid invoices or enrollment status. Check your portal for alerts, then contact it-helpdesk@escp.eu and invoicing@escp.eu if needed.",
-    "a_fr": "Les blocages sont généralement liés à des factures impayées ou au statut d’inscription. Vérifiez les alertes sur le portail puis contactez it-helpdesk@escp.eu et invoicing@escp.eu si nécessaire."
+    "q": "My intranet is blocked. Could you please unlock it?",
+    "a": "Blocks are usually linked to unpaid invoices or enrollment status. Check your portal for alerts, then contact it-helpdesk@escp.eu and invoicing@escp.eu if needed."
   },
   {
     "theme": "Aurion/Intranet",
-    "q_en": "I have issues with the registration process. Could you help me?",
-    "q_fr": "J’ai des difficultés avec le processus d’enregistrement. Pouvez-vous m'aider ?",
-    "a_en": "Take screenshots of the error, confirm your programme/campus, and contact your programme office. For technical errors, also email it-helpdesk@escp.eu.",
-    "a_fr": "Prenez des captures d’écran de l’erreur, précisez votre programme/campus et contactez votre programme office. Pour les problèmes techniques, écrivez aussi à it-helpdesk@escp.eu."
+    "q": "I have issues with the registration process. Could you help me?",
+    "a": "Take screenshots of the error, confirm your programme/campus, and contact your programme office. For technical errors, also email it-helpdesk@escp.eu."
   },
   {
     "theme": "Aurion/Intranet",
-    "q_en": "My third-payer party did not receive any email to update data. Could you re-send it?",
-    "q_fr": "Mon tiers-payeur n’a pas reçu de mail pour mettre à jour les données. Pouvez-vous lui renvoyer ?",
-    "a_en": "Verify the payer’s email in the portal, then request a resend from invoicing@escp.eu. Ask the payer to check spam and allow emails from @escp.eu.",
-    "a_fr": "Vérifiez l’e-mail du tiers payeur dans le portail, puis demandez un renvoi à invoicing@escp.eu. Demandez au tiers de vérifier les spams et d’autoriser @escp.eu."
+    "q": "My third-payer party did not receive any email to update data. Could you re-send it?",
+    "a": "Verify the payer’s email in the portal, then request a resend from invoicing@escp.eu. Ask the payer to check spam and allow emails from @escp.eu."
   },
   {
     "theme": "Aurion/Intranet",
-    "q_en": "I cannot update my payment method. How to proceed?",
-    "q_fr": "Je ne peux pas mettre à jour ma méthode de paiement. Comment procéder ?",
-    "a_en": "Try another browser, clear cache, and ensure pop-ups are allowed. If the issue persists, email a screenshot to it-helpdesk@escp.eu and invoicing@escp.eu.",
-    "a_fr": "Essayez un autre navigateur, videz le cache et autorisez les pop-ups. Si le problème persiste, envoyez une capture d’écran à it-helpdesk@escp.eu et invoicing@escp.eu."
+    "q": "I cannot update my payment method. How to proceed?",
+    "a": "Try another browser, clear cache, and ensure pop-ups are allowed. If the issue persists, email a screenshot to it-helpdesk@escp.eu and invoicing@escp.eu."
   },
   {
     "theme": "Other",
-    "q_en": "I have a question about my program or my courses. Who should I contact?",
-    "q_fr": "J'ai une question sur mon programme ou sur mes cours. Qui dois-je contacter ?",
-    "a_en": "Contact your programme office (see your handbook or portal → Contacts). For course content, you may also reach out to the course coordinator.",
-    "a_fr": "Contactez votre programme office (voir votre guide ou portail → Contacts). Pour le contenu des cours, vous pouvez aussi écrire au coordinateur du cours."
+    "q": "I have a question about my program or my courses. Who should I contact?",
+    "a": "Contact your programme office (see your handbook or portal → Contacts). For course content, you may also reach out to the course coordinator."
   },
   {
     "theme": "Other",
-    "q_en": "My question is not listed here. Who should I contact?",
-    "q_fr": "Ma question n'est pas listée dans ces propositions. Qui dois-je contacter ?",
-    "a_en": "Start with your programme office or the general helpdesk via help@escp.eu. They will direct you to the right team.",
-    "a_fr": "Commencez par votre programme office ou le support général via help@escp.eu. Ils vous orienteront vers l’équipe appropriée."
+    "q": "My question is not listed here. Who should I contact?",
+    "a": "Start with your programme office or the general helpdesk via help@escp.eu. They will direct you to the right team."
   }
 ]
